@@ -1,0 +1,9 @@
+{
+  "name": "addone",
+  "version": "0.0.1",
+  "description": "Adds one to a number, uses C++ but not nan",
+  "main": "./addone.js",
+  "author": "James Vickers",
+  "license": "MIT",
+  "gypfile": true
+}
