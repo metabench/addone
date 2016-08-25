@@ -1,2 +1,2 @@
 # addone
-Adds 1 to an int. Node c++ addon (not using nan)
+Adds 1 to a number. Node c++ addon (not using nan)
