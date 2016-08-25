@@ -14,7 +14,6 @@ using v8::Object;
 using v8::String;
 using v8::Number;
 using v8::Value;
-using v8::Handle;
 using v8::ArrayBuffer;
 
 void Addone(const FunctionCallbackInfo<Value>& args) {
@@ -28,37 +27,25 @@ void Addone(const FunctionCallbackInfo<Value>& args) {
 
 void Addone_TA(const FunctionCallbackInfo<Value>& args) {
 
-  const double *x = reinterpret_cast<double*>(args[0].As<v8::Float64Array>()->Buffer()->GetContents().Data());
-  int l = sizeof(*x);
-  cout << "Length of array = " << (l) << endl;
+  v8::Local<v8::Float64Array> fa_input = args[0].As<v8::Float64Array>();
+
+  int l = fa_input -> ByteLength() / sizeof(double);
+
+  const double *x = reinterpret_cast<double*>(fa_input -> Buffer() -> GetContents().Data());
+  //cout << "Length of array = " << (l) << endl;
 
   double* res = new double[l];
 
   for (int c = 0; c < l; c++) {
-    res[c] = x[c] + 1;
+    res[c] = addone(x[c]);
   }
-
-  //v8::Handle<v8::JSTypedArray> typed_array;
 
   // Outputting a new typed array...
 
-  //args.GetReturnValue().Set(
-  //		v8::Float64Array::New(args.GetIsolate(), res)
-  //	);
-
-  //v8::Float64Array f64a_res = v8::Float64Array::New(args.GetIsolate(), res);
-
   Local<ArrayBuffer> ab = v8::ArrayBuffer::New (args.GetIsolate(), res, l * sizeof(double));
-  v8::Local<v8::Float64Array> f64a_res = v8::Float64Array::New(ab, 0, l); //possibly * sizeof(double)
+  v8::Local<v8::Float64Array> f64a_res = v8::Float64Array::New(ab, 0, l);
 
   args.GetReturnValue().Set(f64a_res);
-
-
-
-
-
-
-
 
 }
 

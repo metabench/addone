@@ -6,7 +6,7 @@ var addone = require('./build/Release/addone');
 var res = addone.addone(1.1);
 console.log('res', res);
 
-var ta = new Float64Array(8);
+var ta = new Float64Array(4);
 ta.fill(1);
 
 var res2 = addone.addone_ta(ta);
