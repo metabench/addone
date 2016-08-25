@@ -15,6 +15,7 @@ using v8::String;
 using v8::Number;
 using v8::Value;
 using v8::Handle;
+using v8::ArrayBuffer;
 
 void Addone(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
@@ -44,6 +45,15 @@ void Addone_TA(const FunctionCallbackInfo<Value>& args) {
   //args.GetReturnValue().Set(
   //		v8::Float64Array::New(args.GetIsolate(), res)
   //	);
+
+  //v8::Float64Array f64a_res = v8::Float64Array::New(args.GetIsolate(), res);
+
+  Local<ArrayBuffer> ab = v8::ArrayBuffer::New (args.GetIsolate(), res, l * sizeof(double));
+  v8::Local<v8::Float64Array> f64a_res = v8::Float64Array::New(ab, 0, l); //possibly * sizeof(double)
+
+  args.GetReturnValue().Set(f64a_res);
+
+
 
 
 
