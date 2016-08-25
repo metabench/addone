@@ -14,7 +14,10 @@ using v8::Value;
 
 void Addone(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
-  int res = addone(args[0]->NumberValue());
+
+  //
+
+  double res = addone(args[0]->NumberValue());
   args.GetReturnValue().Set(Number::New(isolate, res));
 }
 
