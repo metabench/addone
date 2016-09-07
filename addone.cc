@@ -43,7 +43,8 @@ void Addone_TA(const FunctionCallbackInfo<Value>& args) {
   // Outputting a new typed array...
 
   Local<ArrayBuffer> ab = v8::ArrayBuffer::New (args.GetIsolate(), res, l * sizeof(double));
-	delete[] res;
+	//delete[] res;
+	delete[] x;
   v8::Local<v8::Float64Array> f64a_res = v8::Float64Array::New(ab, 0, l);
 
   args.GetReturnValue().Set(f64a_res);
