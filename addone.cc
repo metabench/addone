@@ -40,9 +40,30 @@ void Addone_TA_F64(const FunctionCallbackInfo<Value>& args) {
 
   // Output a new typed array
   Local<ArrayBuffer> ab = v8::ArrayBuffer::New (args.GetIsolate(), res, l * sizeof(double));
-	delete[] data;
+  delete[] data;
   v8::Local<v8::Float64Array> f64a_res = v8::Float64Array::New(ab, 0, l);
   args.GetReturnValue().Set(f64a_res);
+}
+
+void Addone_TA_I32(const FunctionCallbackInfo<Value>& args) {
+  // Get the input values, accounting for subarrays
+  v8::Local<v8::Int32Array> fa_input = args[0].As<v8::Int32Array>();
+  int l = fa_input -> ByteLength() / sizeof(int32_t);
+  void *data = fa_input->Buffer()->GetContents().Data();
+  size_t offset = fa_input->ByteOffset();
+  int32_t *x = reinterpret_cast<int32_t*>(static_cast<unsigned char*>(data) + offset);
+  int32_t* res = new int32_t[l];
+
+  // Inner processing
+  for (int c = 0; c < l; c++) {
+    res[c] = addone(x[c]);
+  }
+
+  // Output a new typed array
+  Local<ArrayBuffer> ab = v8::ArrayBuffer::New (args.GetIsolate(), res, l * sizeof(int32_t));
+  delete[] data;
+  v8::Local<v8::Int32Array> i32a_res = v8::Int32Array::New(ab, 0, l);
+  args.GetReturnValue().Set(i32a_res);
 }
 
 /*
@@ -104,6 +125,7 @@ void _Addone_TA_F64(const FunctionCallbackInfo<Value>& args) {
 void init(Local<Object> exports) {
   NODE_SET_METHOD(exports, "addone", Addone);
   NODE_SET_METHOD(exports, "addone_ta_f64", Addone_TA_F64);
+  NODE_SET_METHOD(exports, "addone_ta_i32", Addone_TA_I32);
 }
 
 NODE_MODULE(addone, init)
