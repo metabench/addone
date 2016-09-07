@@ -2,6 +2,7 @@
 #include <node.h>
 #include "addone_inner.cc"
 #include <iostream>
+//#include <cstddef>
 
 using namespace std;
 
@@ -25,13 +26,36 @@ void Addone(const FunctionCallbackInfo<Value>& args) {
   args.GetReturnValue().Set(Number::New(isolate, res));
 }
 
-void Addone_TA(const FunctionCallbackInfo<Value>& args) {
-
+void Addone_TA_F64(const FunctionCallbackInfo<Value>& args) {
   v8::Local<v8::Float64Array> fa_input = args[0].As<v8::Float64Array>();
-
   int l = fa_input -> ByteLength() / sizeof(double);
+/*
+  void *data = (fa_input->Buffer()->GetContents().Data());
+  size_t offset = fa_input->ByteOffset();
+  unsigned char* data_offset = static_cast<unsigned char*>(data + offset);
+  const double *x = reinterpret_cast<double*>(data_offset);
+*/
 
-  const double *x = reinterpret_cast<double*>(fa_input -> Buffer() -> GetContents().Data());
+/*
+
+  void *data = fa_input->Buffer()->GetContents().Data();
+  size_t offset = fa_input->ByteOffset();
+  unsigned char* data_offset = static_cast<unsigned char*>(data + offset);
+  double *x = reinterpret_cast<double*>(data_offset);
+  */
+
+  //v8::Local<v8::Float64Array> array = argument.As<v8::Float64Array>();
+  void *data = fa_input->Buffer()->GetContents().Data();
+
+  size_t offset = fa_input->ByteOffset();
+  size_t data_ptr = reinterpret_cast<size_t>(data);
+  data_ptr += offset;
+
+  double *x = reinterpret_cast<double*>(data_ptr);
+
+  //const double *x = reinterpret_cast<double*>
+  //const double *x = reinterpret_cast<double*>(fa_input -> Buffer() -> GetContents().Data());
+
   //cout << "Length of array = " << (l) << endl;
 
   double* res = new double[l];
@@ -44,16 +68,15 @@ void Addone_TA(const FunctionCallbackInfo<Value>& args) {
 
   Local<ArrayBuffer> ab = v8::ArrayBuffer::New (args.GetIsolate(), res, l * sizeof(double));
 	//delete[] res;
-	delete[] x;
+	//delete[] x;
+	delete[] data;
   v8::Local<v8::Float64Array> f64a_res = v8::Float64Array::New(ab, 0, l);
-
   args.GetReturnValue().Set(f64a_res);
-
 }
 
 void init(Local<Object> exports) {
   NODE_SET_METHOD(exports, "addone", Addone);
-  NODE_SET_METHOD(exports, "addone_ta", Addone_TA);
+  NODE_SET_METHOD(exports, "addone_ta_f64", Addone_TA_F64);
 }
 
 NODE_MODULE(addone, init)
