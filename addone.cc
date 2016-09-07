@@ -28,9 +28,7 @@ void Addone_TA_F64(const FunctionCallbackInfo<Value>& args) {
   // Get the input values, accounting for subarrays
   v8::Local<v8::Float64Array> fa_input = args[0].As<v8::Float64Array>();
   int l = fa_input -> ByteLength() / sizeof(double);
-  void *data = fa_input->Buffer()->GetContents().Data();
-  size_t offset = fa_input->ByteOffset();
-  double *x = reinterpret_cast<double*>(static_cast<unsigned char*>(data) + offset);
+  double *x = reinterpret_cast<double*>(static_cast<unsigned char*>(fa_input->Buffer()->GetContents().Data()) + fa_input->ByteOffset());
   double* res = new double[l];
 
   // Inner processing
@@ -39,19 +37,14 @@ void Addone_TA_F64(const FunctionCallbackInfo<Value>& args) {
   }
 
   // Output a new typed array
-  Local<ArrayBuffer> ab = v8::ArrayBuffer::New (args.GetIsolate(), res, l * sizeof(double));
-  delete[] data;
-  v8::Local<v8::Float64Array> f64a_res = v8::Float64Array::New(ab, 0, l);
-  args.GetReturnValue().Set(f64a_res);
+  args.GetReturnValue().Set(v8::Float64Array::New(v8::ArrayBuffer::New (args.GetIsolate(), res, l * sizeof(double)), 0, l));
 }
 
 void Addone_TA_I32(const FunctionCallbackInfo<Value>& args) {
   // Get the input values, accounting for subarrays
   v8::Local<v8::Int32Array> fa_input = args[0].As<v8::Int32Array>();
   int l = fa_input -> ByteLength() / sizeof(int32_t);
-  void *data = fa_input->Buffer()->GetContents().Data();
-  size_t offset = fa_input->ByteOffset();
-  int32_t *x = reinterpret_cast<int32_t*>(static_cast<unsigned char*>(data) + offset);
+  int32_t *x = reinterpret_cast<int32_t*>(static_cast<unsigned char*>(fa_input->Buffer()->GetContents().Data()) + fa_input->ByteOffset());
   int32_t* res = new int32_t[l];
 
   // Inner processing
@@ -60,10 +53,7 @@ void Addone_TA_I32(const FunctionCallbackInfo<Value>& args) {
   }
 
   // Output a new typed array
-  Local<ArrayBuffer> ab = v8::ArrayBuffer::New (args.GetIsolate(), res, l * sizeof(int32_t));
-  delete[] data;
-  v8::Local<v8::Int32Array> i32a_res = v8::Int32Array::New(ab, 0, l);
-  args.GetReturnValue().Set(i32a_res);
+  args.GetReturnValue().Set(v8::Int32Array::New(v8::ArrayBuffer::New (args.GetIsolate(), res, l * sizeof(int32_t)), 0, l));
 }
 
 /*
